@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search as SearchIcon } from 'lucide-react';
 import SearchBar from '../components/SearchBar';
+import AiMoodMatcher from '../components/AiMoodMatcher';
 import MovieGrid from '../components/MovieGrid';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
@@ -89,14 +90,22 @@ export default function Search() {
     setTotalPages(1);
   };
 
+  const handleAiMoviesFound = (aiMovies, recommendedTitle) => {
+    setSearchTerm(recommendedTitle);
+    setMovies(aiMovies);
+    setHasSearched(true);
+    setPage(1);
+    setTotalPages(1);
+  };
+
   return (
     <div className="page-container">
       <div className="page-header">
         <h1 className="page-title">
           <SearchIcon className="brand-icon" size={28} aria-hidden="true" />
-          Search Movies
+          Search & AI Discovery
         </h1>
-        <p className="page-subtitle">Type a movie title to search TMDB with real-time debounced updates & infinite scroll</p>
+        <p className="page-subtitle">Search titles with 500ms debouncing or ask AI to match your current mood</p>
       </div>
 
       <SearchBar
@@ -106,10 +115,12 @@ export default function Search() {
         placeholder="Type a title e.g. Inception, Batman, Avatar..."
       />
 
+      <AiMoodMatcher onMoviesFound={handleAiMoviesFound} />
+
       {!hasSearched && !loading && (
         <EmptyState
-          title="Search for a Movie"
-          message="Start typing in the search bar above. Results will automatically load after 500ms."
+          title="Search for a Movie or Match Your Mood"
+          message="Type in the search bar above or use the AI Mood Matcher to discover recommendations."
           icon={SearchIcon}
         />
       )}
