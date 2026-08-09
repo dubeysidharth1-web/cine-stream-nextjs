@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="750" viewBox="0 0 500 750" fill="none">
+  <rect width="500" height="750" fill="#18181c"/>
+  <rect x="2" y="2" width="496" height="746" rx="12" stroke="#2a2a32" stroke-width="4"/>
+  <path d="M250 320C277.614 320 300 297.614 300 270C300 242.386 277.614 220 250 220C222.386 220 200 242.386 200 270C200 297.614 222.386 320 250 320Z" stroke="#4a4a5a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M150 480L210 400L260 450L310 380L350 480H150Z" fill="#2a2a36" stroke="#4a4a5a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="250" y="550" font-family="'Outfit', sans-serif" font-size="24" font-weight="600" fill="#6a6a7a" text-anchor="middle">No Poster Available</text>
+</svg>
