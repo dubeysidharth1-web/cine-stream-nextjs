@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Star } from 'lucide-react';
 import { getReleaseYear } from '../utils/formatDate';
 import { FALLBACK_POSTER } from '../utils/constants';
+import FavoriteButton from './FavoriteButton';
 
 export default function MovieCard({ movie, actionButton }) {
   const [imageError, setImageError] = useState(false);
@@ -33,7 +34,7 @@ export default function MovieCard({ movie, actionButton }) {
         </h3>
         <div className="movie-meta">
           <span className="release-year">{releaseYear}</span>
-          {actionButton}
+          {actionButton ? actionButton : <FavoriteButton movie={movie} />}
         </div>
       </div>
     </article>

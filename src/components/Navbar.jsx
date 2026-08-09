@@ -1,8 +1,11 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { Film, Home, Search, Heart } from 'lucide-react';
+import { useFavorites } from '../context/FavoritesContext';
 
 export default function Navbar() {
+  const { favoritesCount } = useFavorites();
+
   return (
     <header className="navbar-header">
       <div className="navbar-container">
@@ -45,6 +48,11 @@ export default function Navbar() {
               >
                 <Heart className="nav-icon" size={18} aria-hidden="true" />
                 <span>Favorites</span>
+                {favoritesCount > 0 && (
+                  <span className="fav-badge" aria-label={`${favoritesCount} favorite movies saved`}>
+                    {favoritesCount}
+                  </span>
+                )}
               </NavLink>
             </li>
           </ul>
