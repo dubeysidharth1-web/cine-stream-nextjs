@@ -5,7 +5,9 @@ import MovieGrid from '../components/MovieGrid';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
+import InfiniteScrollLoader from '../components/InfiniteScrollLoader';
 import { useDebounce } from '../hooks/useDebounce';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import { searchMovies } from '../services/tmdb';
 import { sanitizeQuery } from '../utils/sanitize';
 
@@ -14,42 +16,77 @@ export default function Search() {
   const debouncedTerm = useDebounce(searchTerm, 500);
 
   const [movies, setMovies] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const executeSearch = useCallback(async (query) => {
+  const executeSearchPage = useCallback(async (query, pageNum = 1, isInitial = true) => {
     const cleanQuery = sanitizeQuery(query);
     if (!cleanQuery) {
       setMovies([]);
       setLoading(false);
+      setLoadingMore(false);
       setError(null);
       setHasSearched(false);
       return;
     }
 
     try {
-      setLoading(true);
+      if (isInitial) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
       setError(null);
       setHasSearched(true);
-      const data = await searchMovies(cleanQuery, 1);
-      setMovies(data.movies);
+
+      const data = await searchMovies(cleanQuery, pageNum);
+
+      setTotalPages(data.totalPages || 1);
+      setPage(data.page || pageNum);
+
+      if (isInitial) {
+        setMovies(data.movies);
+      } else {
+        setMovies((prevMovies) => {
+          const existingIds = new Set(prevMovies.map((m) => m.id));
+          const newUniqueMovies = data.movies.filter((m) => !existingIds.has(m.id));
+          return [...prevMovies, ...newUniqueMovies];
+        });
+      }
     } catch (err) {
       setError(err.message || 'Search request failed. Please try again.');
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   }, []);
 
   useEffect(() => {
-    executeSearch(debouncedTerm);
-  }, [debouncedTerm, executeSearch]);
+    executeSearchPage(debouncedTerm, 1, true);
+  }, [debouncedTerm, executeSearchPage]);
+
+  const loadMoreSearchResults = useCallback(() => {
+    if (loading || loadingMore || page >= totalPages) return;
+    executeSearchPage(debouncedTerm, page + 1, false);
+  }, [debouncedTerm, executeSearchPage, loading, loadingMore, page, totalPages]);
+
+  const sentinelRef = useInfiniteScroll({
+    onLoadMore: loadMoreSearchResults,
+    hasMore: page < totalPages,
+    isLoading: loading || loadingMore,
+  });
 
   const handleClear = () => {
     setSearchTerm('');
     setMovies([]);
     setError(null);
     setHasSearched(false);
+    setPage(1);
+    setTotalPages(1);
   };
 
   return (
@@ -59,7 +96,7 @@ export default function Search() {
           <SearchIcon className="brand-icon" size={28} aria-hidden="true" />
           Search Movies
         </h1>
-        <p className="page-subtitle">Type a movie title to search TMDB with real-time debounced updates</p>
+        <p className="page-subtitle">Type a movie title to search TMDB with real-time debounced updates & infinite scroll</p>
       </div>
 
       <SearchBar
@@ -78,8 +115,10 @@ export default function Search() {
       )}
 
       {loading && <LoadingSpinner message={`Searching movies for "${searchTerm.trim()}"...`} />}
-      
-      {error && <ErrorMessage message={error} onRetry={() => executeSearch(debouncedTerm)} />}
+
+      {error && !loadingMore && (
+        <ErrorMessage message={error} onRetry={() => executeSearchPage(debouncedTerm, 1, true)} />
+      )}
 
       {!loading && !error && hasSearched && movies.length === 0 && (
         <EmptyState
@@ -88,7 +127,16 @@ export default function Search() {
         />
       )}
 
-      {!loading && !error && movies.length > 0 && <MovieGrid movies={movies} />}
+      {movies.length > 0 && (
+        <>
+          <MovieGrid movies={movies} />
+          <InfiniteScrollLoader
+            sentinelRef={sentinelRef}
+            hasMore={page < totalPages}
+            isLoadingMore={loadingMore}
+          />
+        </>
+      )}
     </div>
   );
 }

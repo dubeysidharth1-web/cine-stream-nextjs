@@ -19,3 +19,32 @@
     gap: 1rem;
   }
 }
+
+/* Infinite Scroll Sentinel Styles */
+.infinite-scroll-sentinel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 4rem;
+  margin-top: 1rem;
+}
+
+.infinite-loader-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.infinite-loader-end {
+  color: var(--text-subtle);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 1rem 0;
+  border-top: 1px dashed var(--border-color);
+  width: 100%;
+}
+
