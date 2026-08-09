@@ -1,41 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Flame } from 'lucide-react';
 import { getPopularMovies } from '../services/tmdb';
 import MovieGrid from '../components/MovieGrid';
+import LoadingSpinner from '../components/LoadingSpinner';
+import ErrorMessage from '../components/ErrorMessage';
+import EmptyState from '../components/EmptyState';
 
 export default function Home() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    async function fetchPopular() {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getPopularMovies(1);
-        if (isMounted) {
-          setMovies(data.movies);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err.message || 'Failed to load popular movies.');
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
+  const fetchPopular = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getPopularMovies(1);
+      setMovies(data.movies);
+    } catch (err) {
+      setError(err.message || 'Failed to load popular movies.');
+    } finally {
+      setLoading(false);
     }
-
-    fetchPopular();
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
+
+  useEffect(() => {
+    fetchPopular();
+  }, [fetchPopular]);
 
   return (
     <div className="page-container">
@@ -54,9 +45,12 @@ export default function Home() {
         <p className="page-subtitle">Currently trending films on TMDB</p>
       </div>
 
-      {loading && <p style={{ color: 'var(--text-muted)' }}>Loading movies...</p>}
-      {error && <p style={{ color: 'var(--primary)' }}>{error}</p>}
-      {!loading && !error && <MovieGrid movies={movies} />}
+      {loading && <LoadingSpinner message="Fetching popular movies..." />}
+      {error && <ErrorMessage message={error} onRetry={fetchPopular} />}
+      {!loading && !error && movies.length === 0 && (
+        <EmptyState title="No movies available" message="Please check your network or try refreshing." />
+      )}
+      {!loading && !error && movies.length > 0 && <MovieGrid movies={movies} />}
     </div>
   );
 }
