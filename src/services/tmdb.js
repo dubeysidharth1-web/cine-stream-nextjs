@@ -25,6 +25,22 @@ async function handleResponse(response) {
  * Normalizes movie data objects from TMDB API
  */
 export function normalizeMovie(movie) {
+  let posterPath = FALLBACK_POSTER;
+  if (movie.poster_path) {
+    if (movie.poster_path.startsWith('http://') || movie.poster_path.startsWith('https://')) {
+      posterPath = movie.poster_path;
+    } else {
+      posterPath = `${TMDB_IMAGE_BASE}${movie.poster_path}`;
+    }
+  }
+
+  let backdropPath = null;
+  if (movie.backdrop_path) {
+    backdropPath = movie.backdrop_path.startsWith('http')
+      ? movie.backdrop_path
+      : `${TMDB_IMAGE_BASE}${movie.backdrop_path}`;
+  }
+
   return {
     id: movie.id,
     title: movie.title || movie.name || 'Untitled',
@@ -32,8 +48,8 @@ export function normalizeMovie(movie) {
     rating: movie.vote_average ? Number(movie.vote_average.toFixed(1)) : 0,
     voteCount: movie.vote_count || 0,
     overview: movie.overview || 'No overview available.',
-    posterPath: movie.poster_path ? `${TMDB_IMAGE_BASE}${movie.poster_path}` : FALLBACK_POSTER,
-    backdropPath: movie.backdrop_path ? `${TMDB_IMAGE_BASE}${movie.backdrop_path}` : null,
+    posterPath,
+    backdropPath,
   };
 }
 
@@ -45,7 +61,7 @@ const MOCK_MOVIES = [
     vote_average: 8.5,
     vote_count: 4200,
     overview: 'Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.',
-    poster_path: null,
+    poster_path: '/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',
   },
   {
     id: 102,
@@ -54,7 +70,7 @@ const MOCK_MOVIES = [
     vote_average: 8.9,
     vote_count: 7800,
     overview: 'The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.',
-    poster_path: null,
+    poster_path: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=500&auto=format&fit=crop&q=80',
   },
   {
     id: 103,
@@ -63,7 +79,7 @@ const MOCK_MOVIES = [
     vote_average: 8.7,
     vote_count: 6500,
     overview: 'Miles Morales catapults across the Multiverse, where he encounters a team of Spider-People charged with protecting its very existence.',
-    poster_path: null,
+    poster_path: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&auto=format&fit=crop&q=80',
   },
   {
     id: 104,
@@ -72,7 +88,7 @@ const MOCK_MOVIES = [
     vote_average: 8.6,
     vote_count: 32000,
     overview: 'The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel.',
-    poster_path: null,
+    poster_path: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=80',
   },
   {
     id: 105,
@@ -81,7 +97,7 @@ const MOCK_MOVIES = [
     vote_average: 8.8,
     vote_count: 35000,
     overview: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
-    poster_path: null,
+    poster_path: '/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg',
   },
   {
     id: 106,
@@ -90,7 +106,7 @@ const MOCK_MOVIES = [
     vote_average: 7.8,
     vote_count: 5400,
     overview: 'John Wick uncovers a path to defeating The High Table. But before he can earn his freedom, Wick must face off against a new enemy.',
-    poster_path: null,
+    poster_path: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&auto=format&fit=crop&q=80',
   },
   {
     id: 107,
@@ -99,7 +115,7 @@ const MOCK_MOVIES = [
     vote_average: 7.8,
     vote_count: 1900,
     overview: 'Paddington, now happily settled with the Brown family, picks up a series of odd jobs to buy the perfect present for his Aunt Lucy.',
-    poster_path: null,
+    poster_path: 'https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=500&auto=format&fit=crop&q=80',
   },
   {
     id: 108,
@@ -108,7 +124,7 @@ const MOCK_MOVIES = [
     vote_average: 7.4,
     vote_count: 13000,
     overview: 'A family is forced to live in silence while hiding from monsters that hunt by sound.',
-    poster_path: null,
+    poster_path: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=500&auto=format&fit=crop&q=80',
   },
   {
     id: 109,
@@ -117,7 +133,7 @@ const MOCK_MOVIES = [
     vote_average: 8.5,
     vote_count: 16000,
     overview: 'During her family\'s move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods, witches, and spirits.',
-    poster_path: null,
+    poster_path: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&auto=format&fit=crop&q=80',
   },
   {
     id: 110,
@@ -126,7 +142,7 @@ const MOCK_MOVIES = [
     vote_average: 7.8,
     vote_count: 11500,
     overview: 'A detective investigates the death of a patriarch of an eccentric, combative family.',
-    poster_path: null,
+    poster_path: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=500&auto=format&fit=crop&q=80',
   },
   {
     id: 111,
@@ -135,7 +151,7 @@ const MOCK_MOVIES = [
     vote_average: 7.9,
     vote_count: 15800,
     overview: 'While navigating their careers in Los Angeles, a pianist and an actress fall in love while attempting to reconcile their aspirations for the future.',
-    poster_path: null,
+    poster_path: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&auto=format&fit=crop&q=80',
   },
   {
     id: 112,
@@ -144,7 +160,7 @@ const MOCK_MOVIES = [
     vote_average: 8.5,
     vote_count: 31000,
     overview: 'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological tests of his ability.',
-    poster_path: null,
+    poster_path: '/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
   }
 ];
 
