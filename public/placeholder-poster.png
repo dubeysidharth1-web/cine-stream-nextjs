@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="750" viewBox="0 0 500 750" fill="none">
+  <rect width="500" height="750" fill="#1e293b"/>
+  <rect x="20" y="20" width="460" height="710" rx="12" stroke="#334155" stroke-width="2" stroke-dasharray="8 8"/>
+  <path d="M250 320C272.091 320 290 302.091 290 280C290 257.909 272.091 240 250 240C227.909 240 210 257.909 210 280C210 302.091 227.909 320 250 320Z" stroke="#64748b" stroke-width="6"/>
+  <path d="M170 460L210 400L250 440L300 370L330 460H170Z" fill="#475569"/>
+  <text x="250" y="520" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="22" font-weight="600" text-anchor="middle">No Poster Available</text>
+  <text x="250" y="550" fill="#64748b" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle">Cine-Stream Explorer</text>
+</svg>
