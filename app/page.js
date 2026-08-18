@@ -1,69 +1,43 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { getPopularMovies } from "@/services/tmdb";
+import MovieGrid from "@/components/MovieGrid";
+import MovieCard from "@/components/MovieCard";
+import EmptyState from "@/components/EmptyState";
+import FavoriteButtonSlot from "@/components/FavoriteButtonSlot";
 
-export default function Home() {
+/**
+ * Home Page (Server Component).
+ * Fetches initial popular movies on the server to prevent client-side useEffect waterfalls.
+ */
+export default async function HomePage() {
+  const { results: movies } = await getPopularMovies(1);
+
+  if (!movies || movies.length === 0) {
+    return (
+      <EmptyState
+        title="No Popular Movies Available"
+        message="Unable to retrieve trending movies. Please verify your TMDB API configuration."
+      />
+    );
+  }
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.js</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div>
+      <section className="page-header">
+        <h1 className="page-title">Popular Movies</h1>
+        <p className="page-subtitle">
+          Explore top-rated and trending films fetched live via Next.js 15 Server Components.
+        </p>
+      </section>
+
+      <MovieGrid>
+        {movies.map((movie) => (
+          <MovieCard
+            key={movie.id}
+            movie={movie}
+            actionSlot={<FavoriteButtonSlot movie={movie} />}
+          />
+        ))}
+      </MovieGrid>
     </div>
   );
 }
