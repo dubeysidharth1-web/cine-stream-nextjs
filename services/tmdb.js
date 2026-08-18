@@ -50,8 +50,8 @@ export async function getPopularMovies(page = 1) {
     const data = await fetchFromTMDB("/movie/popular", { page });
     return data || { results: [], total_pages: 0 };
   } catch (error) {
-    console.error("Error in getPopularMovies:", error);
-    throw error;
+    console.warn("Unable to fetch popular movies from TMDB (network timeout or offline):", error.message);
+    return { results: [], total_pages: 0 };
   }
 }
 
