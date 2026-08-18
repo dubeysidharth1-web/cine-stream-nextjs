@@ -1,8 +1,11 @@
 import { getPopularMovies } from "@/services/tmdb";
-import MovieGrid from "@/components/MovieGrid";
-import MovieCard from "@/components/MovieCard";
+import MovieExplorer from "@/components/MovieExplorer";
 import EmptyState from "@/components/EmptyState";
-import FavoriteButtonSlot from "@/components/FavoriteButtonSlot";
+
+export const metadata = {
+  title: "Popular Movies | Cine-Stream",
+  description: "Browse popular movies, search top titles, and explore cinema details with Next.js 15.",
+};
 
 /**
  * Home Page (Server Component).
@@ -20,24 +23,5 @@ export default async function HomePage() {
     );
   }
 
-  return (
-    <div>
-      <section className="page-header">
-        <h1 className="page-title">Popular Movies</h1>
-        <p className="page-subtitle">
-          Explore top-rated and trending films fetched live via Next.js 15 Server Components.
-        </p>
-      </section>
-
-      <MovieGrid>
-        {movies.map((movie) => (
-          <MovieCard
-            key={movie.id}
-            movie={movie}
-            actionSlot={<FavoriteButtonSlot movie={movie} />}
-          />
-        ))}
-      </MovieGrid>
-    </div>
-  );
+  return <MovieExplorer initialMovies={movies} />;
 }
