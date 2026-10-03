@@ -25,7 +25,7 @@ export default function FavoriteButton({ movie }) {
       type="button"
       onClick={handleClick}
       className={`fav-btn ${active ? "is-favorite" : ""}`}
-      aria-label={active ? `Remove ${movie.title} from favorites` : `Add ${movie.title} to favorites`}
+      aria-label={active ? `Remove ${movie?.title || "movie"} from favorites` : `Add ${movie?.title || "movie"} to favorites`}
       title={active ? "Remove from favorites" : "Add to favorites"}
     >
       <svg

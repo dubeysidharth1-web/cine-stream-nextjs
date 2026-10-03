@@ -2,13 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 
-const FavoritesContext = createContext({
-  favorites: [],
-  addFavorite: () => {},
-  removeFavorite: () => {},
-  isFavorite: () => false,
-  toggleFavorite: () => {},
-});
+const FavoritesContext = createContext(null);
 
 const STORAGE_KEY = "cine_stream_favorites_v1";
 
