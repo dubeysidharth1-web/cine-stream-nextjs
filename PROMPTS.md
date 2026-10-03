@@ -96,3 +96,46 @@ Created `FavoritesContext.jsx` with safety checks (`typeof window !== 'undefined
 1. **Build Verification**: Executed `npm run build` cleanly with zero TypeScript/ESLint warnings.
 2. **Dynamic Route Validation**: Verified `/movie/[id]` metadata updates correctly per movie title.
 3. **Accessibility**: Verified visible focus rings (`:focus-visible`), ARIA landmark roles (`role="search"`, `role="status"`), and keyboard navigation across all routes.
+
+---
+
+### Phase 5: Sprint 11 QA & Automated Testing (Jest + RTL)
+
+#### 1. Requirement / Problem
+Implement Sprint 11 Track A automated unit and component testing suite using Jest and React Testing Library without breaking existing Cine-Stream functionality or architecture.
+
+#### 2. Prompts Used
+
+##### Prompt 1: Jest & RTL Configuration Setup
+> "Configure Jest and React Testing Library for Next.js 15 using official next/jest configuration, jsdom environment, and setupFilesAfterEnv loading @testing-library/jest-dom."
+
+##### Prompt 2: Component & User Interaction Testing
+> "Create component rendering tests for MovieCard, ErrorMessage, and EmptyState using semantic RTL queries. Create interaction tests for SearchBar and FavoriteButton using @testing-library/user-event."
+
+##### Prompt 3: Async Component & API Network Mocking
+> "Write async component test for MovieExplorer. Mock network layer so tests do not depend on live TMDB API. Verify loading state, mock API response processing, DOM update, and error handling."
+
+##### Prompt 4: Debugging Test Failures & Timer Alignment
+> "Debug act(...) warnings in debounced input tests and fix multi-element matching for 'N/A' texts. Mock next/link and next/image in jest.setup.js to eliminate side effects during test execution."
+
+#### 3. What the AI Suggested
+- Configured `next/jest` in `jest.config.js` with `testEnvironment: "jsdom"` and `coverageProvider: "v8"`.
+- Extracted shared test data (`mockMovie`, `mockMoviesList`) and custom render wrapper (`renderWithProviders`) into `__tests__/helpers/test-helpers.js`.
+- Mocked Next.js `<Link>` and `<Image>` in `jest.setup.js` to isolate DOM rendering.
+- Used `@testing-library/user-event` with `jest.useFakeTimers()` for debounced input testing.
+
+#### 4. What Was Implemented
+- Added testing devDependencies: `jest`, `jest-environment-jsdom`, `@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event`.
+- Added test scripts `"test": "jest"` and `"test:coverage": "jest --coverage"` to `package.json`.
+- Implemented 14 test suites with 57 automated tests covering components, hooks, services, utils, and context.
+- Achieved **98.29% statement coverage** across all audited application code.
+
+#### 5. Manual Modifications & Decisions
+- Extracted test helpers into `__tests__/helpers/test-helpers.js` to eliminate test code duplication.
+- Applied optional chaining on `movie?.title` in `FavoriteButton.jsx` for defensive rendering.
+- Initialized `FavoritesContext` with `null` fallback so `useFavorites()` correctly validates provider boundary.
+
+#### 6. Key Learnings & Debugging
+- Next.js `<Link>` component triggers intersection observer prefetching, which can cause unhandled state updates during test teardown if `<Link>` is not mocked in `jest.setup.js`.
+- Wrapping debounced timer advances (`jest.advanceTimersByTime`) inside React's `act()` ensures state updates flush cleanly before assertions.
+
